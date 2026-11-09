@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png">
+    <title>Transformar AGL</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="logo-area">
+            <img src="logo.png" alt="Tecnoponto" class="logo">
+            <div>
+                <h1>Transformador de AGL</h1>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="upload-area" id="uploadArea" style="position: relative; cursor: pointer;">
+            <div class="upload-content">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width: 48px; height: 48px; margin-bottom: 10px;">
+                    <path d="M12 16V4M12 4L8 8M12 4L16 8"/>
+                    <path d="M4 16V18C4 19.1046 4.89543 20 6 20H18C19.1046 20 20 19.1046 20 18V16"/>
+                </svg>
+                <p class="upload-text">Arraste o arquivo aqui ou clique para selecionar</p>
+                <p class="upload-hint">Arquivo exportado do Evo Facial (.txt)</p>
+                <!-- Input ocupa 100% da área de forma transparente, garantindo o clique nativo -->
+                <input type="file" id="fileInput" accept=".txt,.csv" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+            </div>
+        </div>
+
+        <div class="file-info" id="fileInfo" hidden>
+            <span id="fileName"></span>
+            <button class="btn-remove" id="btnRemove">✕</button>
+        </div>
+
+        <button class="btn-converter" id="btnConverter" disabled>
+            Converter arquivo
+        </button>
+
+        <div class="status" id="status" hidden></div>
+    </main>
+</div>
+
+<script src="script.js" defer></script>
+</body>
+</html>
