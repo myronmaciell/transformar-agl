@@ -9,6 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let arquivoSelecionado = null;
 
+    // --- VARIÁVEIS DO RATE LIMITER ---
+    let tempoUltimaConversao = 0;
+    const INTERVALO_LIMITE_MS = 3000; // Tempo de espera (3 segundos)
+
     // --- LÓGICA DO MODAL DE AJUDA ---
     const btnAjuda = document.getElementById('btnAjuda');
     const modalAjuda = document.getElementById('modalAjuda');
@@ -106,14 +110,30 @@ document.addEventListener('DOMContentLoaded', () => {
         esconderStatus();
     });
 
-    // --- LÓGICA DE CONVERSÃO ---
+    // --- LÓGICA DE CONVERSÃO (COM RATE LIMITER) ---
     btnConverter.addEventListener('click', () => {
         if (!arquivoSelecionado) return;
+
+        const agora = Date.now();
+
+        // Checagem de Rate Limit
+        if (agora - tempoUltimaConversao < INTERVALO_LIMITE_MS) {
+            const segundosRestantes = Math.ceil((INTERVALO_LIMITE_MS - (agora - tempoUltimaConversao)) / 1000);
+            mostrarStatus(`Aguarde ${segundosRestantes} segundo(s) para converter novamente.`, true);
+            return;
+        }
+
+        // Atualiza a hora da conversão atual
+        tempoUltimaConversao = agora;
+
+        // Desabilita o botão temporariamente
+        btnConverter.disabled = true;
 
         const reader = new FileReader();
 
         reader.onerror = function() {
             mostrarStatus("Erro ao ler o arquivo.", true);
+            btnConverter.disabled = false;
         };
 
         reader.onload = function(e) {
@@ -205,7 +225,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const textoFinal = marcacoes.join('\r\n');
                 const blob = new Blob([textoFinal], { type: 'text/plain;charset=utf-8' });
                 const url = URL.createObjectURL(blob);
-
                 const linkTemp = document.createElement('a');
                 linkTemp.href = url;
                 linkTemp.download = 'AGL_Convertido.txt';
@@ -218,6 +237,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } catch (err) {
                 mostrarStatus(err.message, true);
+            } finally {
+                // Habilita novamente o botão para novos envios
+                btnConverter.disabled = false;
             }
         };
 
