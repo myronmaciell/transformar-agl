@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const linkTemp = document.createElement('a');
                 linkTemp.href = url;
-                linkTemp.download = 'afd_convertido.txt';
+                linkTemp.download = 'AGL_Convertido.txt';
                 document.body.appendChild(linkTemp);
                 linkTemp.click();
                 document.body.removeChild(linkTemp);
