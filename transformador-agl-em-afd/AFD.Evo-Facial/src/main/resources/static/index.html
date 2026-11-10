@@ -26,13 +26,12 @@
                     <path d="M4 16V18C4 19.1046 4.89543 20 6 20H18C19.1046 20 20 19.1046 20 18V16"/>
                 </svg>
                 <p class="upload-text">Arraste o arquivo aqui ou clique para selecionar</p>
-                <p class="upload-hint">Arquivo exportado do Evo Facial (.txt)</p>
-                <!-- Input ocupa 100% da área de forma transparente, garantindo o clique nativo -->
+
                 <input type="file" id="fileInput" accept=".txt,.csv" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
             </div>
         </div>
 
-        <div class="file-info" id="fileInfo" hidden>
+        <div class="file-info" id="fileInfo" style="display: none;" hidden>
             <span id="fileName"></span>
             <button class="btn-remove" id="btnRemove">✕</button>
         </div>
@@ -43,6 +42,35 @@
 
         <div class="status" id="status" hidden></div>
     </main>
+</div>
+
+<!-- Botão Flutuante de Ajuda -->
+<button class="floating-help-btn" id="btnAjuda" title="Como importar no Secullum RH">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+    </svg>
+    <span>Como importar no Secullum RH</span>
+</button>
+
+<!-- Modal de Auxílio -->
+<div class="modal-overlay" id="modalAjuda" style="display: none;" hidden>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Como importar no Secullum RH</h2>
+            <button class="modal-close" id="btnCloseModal" type="button">✕</button>
+        </div>
+        <div class="modal-body">
+            <ol class="steps-list">
+                <li>Acesse o menu <strong>Manutenções &gt; Importação de Dados &gt; Batidas</strong>.</li>
+                <li>Em <strong>Arquivo Texto</strong>, selecione o arquivo AGL convertido.</li>
+                <li>Clique em <strong>Configurar Layout de Importação</strong>, escolha o formato <em>Campos delimitados por caracter</em>, adicione três colunas (<strong>Nº Identificador</strong>, <strong>Data</strong> e <strong>Hora</strong>) e clique em <strong>Concluir</strong>.</li>
+                <li>Insira a justificativa de inclusão manual e clique em <strong>Importar</strong>.</li>
+                <li>Verifique nos menus <strong>Movimentações &gt; Cartão Ponto</strong> ou <strong>Relatórios &gt; Cálculos</strong> se as batidas subiram.</li>
+            </ol>
+        </div>
+    </div>
 </div>
 
 <script src="script.js" defer></script>

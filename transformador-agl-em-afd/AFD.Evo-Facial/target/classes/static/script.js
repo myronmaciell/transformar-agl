@@ -9,12 +9,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let arquivoSelecionado = null;
 
-    // Permite clicar na caixa pontilhada para abrir a janela de seleção de arquivo
-    uploadArea.addEventListener('click', () => {
-        fileInput.click();
+    // --- LÓGICA DO MODAL DE AJUDA ---
+    const btnAjuda = document.getElementById('btnAjuda');
+    const modalAjuda = document.getElementById('modalAjuda');
+    const btnCloseModal = document.getElementById('btnCloseModal');
+
+    function abrirModal() {
+        if (modalAjuda) {
+            modalAjuda.removeAttribute('hidden');
+            modalAjuda.style.display = 'flex';
+        }
+    }
+
+    function fecharModal() {
+        if (modalAjuda) {
+            modalAjuda.setAttribute('hidden', '');
+            modalAjuda.style.display = 'none';
+        }
+    }
+
+    if (btnAjuda) {
+        btnAjuda.addEventListener('click', (e) => {
+            e.stopPropagation();
+            abrirModal();
+        });
+    }
+
+    if (btnCloseModal) {
+        btnCloseModal.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            fecharModal();
+        });
+    }
+
+    if (modalAjuda) {
+        modalAjuda.addEventListener('click', (e) => {
+            if (e.target === modalAjuda) {
+                fecharModal();
+            }
+        });
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modalAjuda && modalAjuda.style.display !== 'none') {
+            fecharModal();
+        }
     });
 
-    // Eventos de Drag and Drop
+    // --- LÓGICA DE DRAG & DROP E FILE INPUT ---
     uploadArea.addEventListener('dragover', (e) => {
         e.preventDefault();
         uploadArea.style.borderColor = '#007bff';
@@ -32,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Quando o arquivo é selecionado pelo input nativo
     fileInput.addEventListener('change', function() {
         if (fileInput.files.length > 0) {
             tratarArquivoSelecionado(fileInput.files[0]);
@@ -43,29 +85,28 @@ document.addEventListener('DOMContentLoaded', () => {
         arquivoSelecionado = file;
         fileNameSpan.textContent = file.name;
 
-        // Alterna a visibilidade dos elementos na DOM
         uploadArea.style.display = 'none';
         fileInfo.style.display = 'flex';
+        fileInfo.removeAttribute('hidden');
 
         btnConverter.disabled = false;
         esconderStatus();
     }
 
-    // Botão para remover o arquivo selecionado
     btnRemove.addEventListener('click', (e) => {
         e.stopPropagation();
         fileInput.value = '';
         arquivoSelecionado = null;
 
-        // Restaura a visibilidade da caixa de upload
         fileInfo.style.display = 'none';
+        fileInfo.setAttribute('hidden', '');
         uploadArea.style.display = 'block';
 
         btnConverter.disabled = true;
         esconderStatus();
     });
 
-    // Ação do Botão de Converter
+    // --- LÓGICA DE CONVERSÃO ---
     btnConverter.addEventListener('click', () => {
         if (!arquivoSelecionado) return;
 
@@ -85,7 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     let linha = linhas[i].trim();
                     if (!linha) continue;
 
-                    // Ignora o cabeçalho inicial
                     if (i === 0 && linha.toLowerCase().includes('no') && linha.toLowerCase().includes('datetime')) {
                         continue;
                     }
@@ -119,7 +159,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             const [ano, mes, dia] = dataLimpa.split('/');
                             const dataBr = `${dia}/${mes}/${ano}`;
 
-                            // Saída com ponto e vírgula
                             marcacoes.push(`${identificador};${dataBr};${hora}`);
                             continue;
                         }
@@ -142,20 +181,18 @@ document.addEventListener('DOMContentLoaded', () => {
                             const [ano, mes, dia] = dataIso.split('-');
                             const dataBr = `${dia}/${mes}/${ano}`;
 
-                            // Saída com ponto e vírgula
                             marcacoes.push(`${identificador};${dataBr};${hora}`);
                             continue;
                         }
                     }
 
-                    // 3. TENTA LER NO FORMATO SEPARADO POR PONTO E VÍRGULA (ex: 3;06/01/2024;07:51:32)
+                    // 3. TENTA LER NO FORMATO SEPARADO POR PONTO E VÍRGULA
                     const matchSemicolon = linha.match(/^(\d+);(\d{2}\/\d{2}\/\d{4});(\d{2}:\d{2})/);
                     if (matchSemicolon) {
                         const id = matchSemicolon[1];
                         const data = matchSemicolon[2];
                         const hora = matchSemicolon[3];
 
-                        // Saída com ponto e vírgula
                         marcacoes.push(`${id};${data};${hora}`);
                         continue;
                     }
@@ -165,7 +202,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error("Nenhuma marcação válida foi encontrada no arquivo. Verifique o formato.");
                 }
 
-                // Gera o conteúdo final e dispara o download automático
                 const textoFinal = marcacoes.join('\r\n');
                 const blob = new Blob([textoFinal], { type: 'text/plain;charset=utf-8' });
                 const url = URL.createObjectURL(blob);
@@ -191,11 +227,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function mostrarStatus(mensagem, ehErro) {
         statusDiv.textContent = mensagem;
         statusDiv.hidden = false;
-        statusDiv.style.color = ehErro ? '#dc3545' : '#28a745';
+        statusDiv.style.display = 'block';
+        statusDiv.className = ehErro ? 'status error' : 'status success';
     }
 
     function esconderStatus() {
         statusDiv.hidden = true;
+        statusDiv.style.display = 'none';
         statusDiv.textContent = '';
     }
 });
